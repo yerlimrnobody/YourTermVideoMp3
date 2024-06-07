@@ -75,7 +75,7 @@ while True:
     4. Quit
     """)
 
-    user_input = input("Choose 1, 2 or Q for Exit : ")
+    user_input = input("Choose 1, 2, 3 or Q for Exit : ")
 
     if user_input == "1":
         print("1")
