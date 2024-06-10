@@ -51,8 +51,45 @@ def audio_download():
     print(video_title.title)
     pytube.YouTube(url_audio).streams.get_audio_only().download(path)
 
-def mp4_converter():
-    print(os.system("ls"))
+
+def list_files_in_directory(directory):
+    try:
+        # Klasördeki dosyaları listele
+        files = os.listdir(directory)
+        if not files:
+            print("Klasörde dosya bulunamadı.")
+            return None
+
+        # Dosyaları numaralandırarak ekrana yazdır
+        print("Klasördeki dosyalar:")
+        for idx in range(len(files)):
+            print(f"{idx + 1}. {files[idx]}")
+
+        return files
+    except FileNotFoundError:
+        print("Geçersiz klasör yolu.")
+        return None
+
+def select_file(files):
+    while True:
+        try:
+            # Kullanıcıdan dosya numarası girmesini iste
+            file_index = int(input("Seçmek istediğiniz dosyanın numarasını girin: ")) - 1
+            if 0 <= file_index < len(files):
+                return files[file_index]
+            else:
+                print("Geçersiz numara. Lütfen tekrar deneyin.")
+        except ValueError:
+            print("Geçersiz giriş. Lütfen bir sayı girin.")
+
+
+def the_file_list():
+    directory = input("Dosyaların bulunduğu klasör yolunu girin: ")
+    files = list_files_in_directory(directory)
+
+    if files:
+        selected_file = select_file(files)
+        print(f"Seçilen dosya: {selected_file}")
 
 
 #ASCII ART ---- ARTISTIK YAZI YAZAN
@@ -87,7 +124,8 @@ while True:
 
     elif user_input == "3":
         print("3")
-        mp4_converter()
+        the_file_list()
+
 
     elif user_input == "q" or user_input == "Q":
         print("Quitting...")
