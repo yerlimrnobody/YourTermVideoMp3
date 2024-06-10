@@ -32,7 +32,8 @@ except:
     subprocess.check_call([sys.executable,"-m", "pip", "install", "moviepy"])
 
 finally:
-    os.system("clear")
+    pass
+    #os.system("clear")
 
 
 def video_download():
@@ -50,6 +51,12 @@ def audio_download():
     video_title = pytube.YouTube(url_audio)
     print(video_title.title)
     pytube.YouTube(url_audio).streams.get_audio_only().download(path)
+
+
+def mp4tomp3convert(name):
+
+    audio = AudioFileClip(name + ".mp4")
+    audio.write_audiofile(name + ".mp3")
 
 
 def list_files_in_directory(directory):
@@ -83,13 +90,18 @@ def select_file(files):
             print("Geçersiz giriş. Lütfen bir sayı girin.")
 
 
-def the_file_list():
+#the_file = ""
+'''def the_file_list():
     directory = input("Dosyaların bulunduğu klasör yolunu girin: ")
     files = list_files_in_directory(directory)
 
     if files:
-        selected_file = select_file(files)
-        print(f"Seçilen dosya: {selected_file}")
+        #selected_file = select_file(files)
+        the_file = select_file(files)
+        print(f"Seçilen dosya: {the_file}")
+        #return the_file'''
+
+
 
 
 #ASCII ART ---- ARTISTIK YAZI YAZAN
@@ -123,8 +135,13 @@ while True:
         audio_download()
 
     elif user_input == "3":
-        print("3")
-        the_file_list()
+        directory = input("Lütfen Dosya Yolunu Giriniz : ")
+        files = list_files_in_directory(directory)
+        selected_file = select_file(files)
+        print(selected_file[:-4])
+        #break
+        mp4tomp3convert(selected_file[:-4])
+
 
 
     elif user_input == "q" or user_input == "Q":
