@@ -1,20 +1,7 @@
-#import os
-#os.system("apt-get install figlet") #NEED SUPER USER PERMISION THIS IS NOT WORKING
-#os.system("clear")
-#os.system("figlet YouTermVideoMp3")
-
-#STANDART LIBRARIES THAT WE WILL USE TO INSTALL REQUIRED LIBRARIES
-#modified
-
 import subprocess
 import sys
 import os
-
-#import pyfiglet
-#import pytube
-#import moviepy
-
-#Yüklenmesi Gereken Paketleri Kontrol Edip Yükleyelim
+import time
 
 try:
     import pyfiglet
@@ -30,19 +17,48 @@ except:
     subprocess.check_call([sys.executable, "-m", "pip", "install", "pytube"])
     print("pyfiglet Installed")
     subprocess.check_call([sys.executable,"-m", "pip", "install", "moviepy"])
+    print("moviepy Installed")
 
 finally:
-    pass
-    #os.system("clear")
+    os.system("clear")
 
+
+def progress_end():
+    print(" ")
+    print("DOWNLOAD COMPLETED...")
+    time.sleep(3)
+
+file_size = 0
+def progress_function(stream, chunk, bytes_remaining):
+    global file_size
+    current = ((file_size - bytes_remaining) / file_size)
+    percent = ('{0:.1f}').format(current * 100)
+    progress = int(50 * current)
+    status = '█' * progress + '-' * (50 - progress)
+    sys.stdout.write(' ↳ |{bar}| {percent}%\r'.format(bar=status, percent=percent))
+    sys.stdout.flush()
 
 def video_download():
-    url_video = input("Please Enter The Url Of Youtube Video : ")
-    print("Path Example For Mac/Linux Users : /home/yourusername/Download")
-    path = input("Please Enter The Path You Want To Download : ")
+    url_video = input("Please Enter The Url Of YouTube Video : ")
+    print("Path Example For Mac/Linux Users : /home/YourUsername/Download")
+    path = input("Please Enter Path To Download : ")
     video_title = pytube.YouTube(url_video)
     print(video_title.title)
-    pytube.YouTube(url_video).streams.get_highest_resolution().download(path)
+    yt = pytube.YouTube(url_video)
+
+    yt.register_on_progress_callback(progress_function)
+
+    stream = yt.streams.get_highest_resolution()
+
+    global file_size
+    file_size = stream.filesize
+    print(f"Please Wait Up to {round(file_size /(1024*1024),2)} MB Downloading...")
+    print("You Will Turn Back To Main Menu When Download Completed.")
+    stream.download(path)
+    progress_end()
+    os.system("clear")
+
+
 
 def audio_download():
     url_audio = input("Please Enter The Url Of Youtube Video : ")
@@ -90,21 +106,7 @@ def select_file(files):
             print("Geçersiz giriş. Lütfen bir sayı girin.")
 
 
-#the_file = ""
-'''def the_file_list():
-    directory = input("Dosyaların bulunduğu klasör yolunu girin: ")
-    files = list_files_in_directory(directory)
-
-    if files:
-        #selected_file = select_file(files)
-        the_file = select_file(files)
-        print(f"Seçilen dosya: {the_file}")
-        #return the_file'''
-
-
-
-
-#ASCII ART ---- ARTISTIK YAZI YAZAN
+#ASCII ART
 figlet_text = "YOUR TERM VIDEO MP3"
 figlet_text_2 = "DOWNLOADER"
 figlet_art = pyfiglet.figlet_format(figlet_text, font="bubble")
@@ -121,7 +123,7 @@ while True:
     1. Video Downloader
     2. Audio Downloader
     3. Convert MP4 Audio To MP3 Audio
-    4. Quit
+    Q. Quit
     """)
 
     user_input = input("Choose 1, 2, 3 or Q for Exit : ")
